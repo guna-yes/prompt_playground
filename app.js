@@ -1,15 +1,37 @@
-import { GoogleGenAI } from "@google/genai";
+import express from "express";
+import { authentication } from "./middlewares/authentication.js";
+import aiRouter from "./routes/aiRoutes.js";
+
 import dotenv from "dotenv";
-dotenv.config()
+import { errorHandler } from "./middlewares/error_service.js";
+dotenv.config();
+const app = express();
+const router = express.Router();
+
+app.use(express.json()); // built-in middleware to parse JSON
+
+// 🧠 Use our custom middleware globally
+
+app.use(authentication);
+
+app.use("/ai", aiRouter);
+
+const port = process.env.PORT || 3000;
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
-const ai = new GoogleGenAI({});
 
-async function main() {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: "How many hits I have in my quota",
-  });
-  console.log(response.text);
-}
+app.use((req, res, next) => {
+  console.log("Middlewares Testing !");
+  next();
+});
 
-main();
+app.post("/api/prompt", async (req, res) => {
+  //  let result = await main()
+  //  res.send(result.text)
+  res.status(200).json("result");
+});
+
+app.use(errorHandler);
+
+app.listen(port, (req, res) => {
+  console.log(`Listening on Port ${port}!`);
+});
