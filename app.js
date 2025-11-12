@@ -4,9 +4,13 @@ import aiRouter from "./routes/aiRoutes.js";
 
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error_service.js";
+import { config } from "./config/config.js";
+import { connectToDB } from "./config/mongodb.js";
 dotenv.config();
 const app = express();
 const router = express.Router();
+
+await connectToDB();
 
 app.use(express.json()); // built-in middleware to parse JSON
 
@@ -16,8 +20,9 @@ app.use(authentication);
 
 app.use("/ai", aiRouter);
 
-const port = process.env.PORT || 3000;
-// The client gets the API key from the environment variable `GEMINI_API_KEY`.
+//using envs using config file
+const port = config.port || 3000;
+
 
 app.use((req, res, next) => {
   console.log("Middlewares Testing !");
