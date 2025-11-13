@@ -1,7 +1,7 @@
 import express from "express";
 import { authentication } from "./middlewares/authentication.js";
 import aiRouter from "./routes/aiRoutes.js";
-
+import dbRouter from "./routes/dbRoutes.js"
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error_service.js";
 import { config } from "./config/config.js";
@@ -19,6 +19,8 @@ app.use(express.json()); // built-in middleware to parse JSON
 app.use(authentication);
 
 app.use("/ai", aiRouter);
+
+app.use("/db", dbRouter);
 
 //using envs using config file
 const port = config.port || 3000;
